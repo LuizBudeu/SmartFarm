@@ -27,6 +27,9 @@ urlpatterns = [
     path("relatorio/", views.relatorio, name="relatorio"),
     path('dispositivos/delete/<int:dispositivo_id>/', views.delete_dispositivo, name='delete_dispositivo'),
     path('dispositivos/atualizar/<int:dispositivo_id>/', views.atualizar_dispositivo, name='atualizar_dispositivo'),
-    path('dispositivos/adicionar/', views.adicionar_dispositivo, name='adicionar_dispositivo')
+    path('dispositivos/adicionar/', views.adicionar_dispositivo, name='adicionar_dispositivo'),
+    path('sensores/delete/<int:sensor_id>/', views.delete_sensor, name='delete_sensor'),
+    path('sensores/atualizar/<int:sensor_id>/', views.atualizar_sensor, name='atualizar_sensor'),
+    path('sensores/adicionar/', views.adicionar_sensor, name='adicionar_sensor'),
 
 ]
