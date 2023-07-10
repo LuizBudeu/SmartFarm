@@ -20,6 +20,13 @@ from django.urls import path
 from app import views
 
 urlpatterns = [
-    path("index/", views.index, name="index"),
     path("first/", views.first, name="first"),
+    path("home/", views.home, name="home"),
+    path("dispositivos/", views.dispositivos, name="dispositivos"),
+    path("sensores/", views.sensores, name="sensores"),
+    path("relatorio/", views.relatorio, name="relatorio"),
+    path('dispositivos/delete/<int:dispositivo_id>/', views.delete_dispositivo, name='delete_dispositivo'),
+    path('dispositivos/atualizar/<int:dispositivo_id>/', views.atualizar_dispositivo, name='atualizar_dispositivo'),
+    path('dispositivos/adicionar/', views.adicionar_dispositivo, name='adicionar_dispositivo')
+
 ]

@@ -11,8 +11,11 @@
         {% include 'navbar.html' %}
 
         <div class="container">
-            <h1>Bem-vindo à página inicial</h1>
-            <p>Esta é uma página simples criada com Django.</p>
+            <h1>Atualizar Dispositivo</h1>
+            <form method="post">
+                {% csrf_token %} {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Salvar</button>
+            </form>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
