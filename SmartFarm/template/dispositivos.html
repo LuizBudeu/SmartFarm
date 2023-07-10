@@ -50,6 +50,9 @@
                                 >Atualizar</a
                             >
                         </td>
+                        {% for sensor in dispositivo.sensores.all %}
+                        <td>{{ sensor.modelo }}</td>
+                        {% endfor %}
                     </tr>
                     {% endfor %}
                 </tbody>
