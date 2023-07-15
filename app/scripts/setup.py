@@ -1,11 +1,17 @@
-import os, sys
+import os
+import sys
 import django
+from pathlib import Path
 
 
 def django_setup():
 
-    projeto_dir = r'C:\\Users\\itigo\Documents\\VscodePessoal\\Poli\\LabRedes\SmartFarm\SmartFarm'
-    sys.path.append(projeto_dir)
+    # projeto_dir = r'C:\\Users\\itigo\Documents\\VscodePessoal\\Poli\\LabRedes\SmartFarm'
+    # projeto_dir = r'D:\\User\\VS_Code_testes\\python\\Poli\\LabRedes\SmartFarm'
+
+    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+    sys.path.append(str(BASE_DIR))
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SmartFarm.settings")
 
     django.setup()
@@ -68,9 +74,8 @@ def create_objects():
         dispositivo=d4,
     )
 
-    print(d1.sensores.all())
+    print(d1.sensores.all())  # type: ignore
     print('Tabelas criadas.')
-
 
 
 def main():
@@ -83,4 +88,3 @@ if __name__ == '__main__':
 
     from app.models import Sensor, Dispositivo, Leitura
     main()
-

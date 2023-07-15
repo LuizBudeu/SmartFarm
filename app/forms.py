@@ -1,6 +1,7 @@
 from django import forms
 from app.models import Dispositivo, Sensor, Leitura
 
+
 class DispositivoForm(forms.ModelForm):
     class Meta:
         model = Dispositivo
@@ -9,5 +10,5 @@ class DispositivoForm(forms.ModelForm):
 
 class SensorForm(forms.ModelForm):
     class Meta:
-        model = Sensor 
-        fields = '__all__'
+        model = Sensor
+        fields = ['modelo', 'tipo', 'ativo', 'valor_ideal']
