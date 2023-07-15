@@ -1,18 +1,75 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
     <head>
         <title>Home</title>
-        <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+        <style>
+            .overview-table-container {
+                border: 1px solid #777; /* Adiciona uma borda sólida */
+                border-radius: 5px; /* Borda arredondada para uma aparência mais suave */
+                padding: 15px; /* Espaçamento interno para afastar a tabela da borda */
+            }
+            .status-bola {
+                border-radius: 50%; /* Borda arredondada para criar uma bola */
+                width: 15px; /* Tamanho da bola */
+                height: 15px; /* Tamanho da bola */
+                display: inline-block; /* Permite alinhar a bola ao centro da célula da tabela */
+                margin-right: 10px; /* Espaçamento à direita para separar a bola do texto */
+            }
+            .status-verde {
+                background-color: green;
+            }
+            .status-laranja {
+                background-color: orange;
+            }
+            .status-vermelho {
+                background-color: red;
+            }
+        </style>
     </head>
     <body>
         {% include 'navbar.html' %}
 
         <div class="container">
-            <h1>Bem-vindo à página inicial</h1>
-            <p>Esta é uma página simples criada com Django.</p>
+            <div class="filtro-localizacao">
+                <form method="get">
+                    {% csrf_token %} {{ form }}
+                    <button type="submit" class="btn btn-primary">Filtrar</button>
+                </form>
+            </div>
+
+            <br />
+            <h1>Overview dos Dispositivos e Sensores</h1>
+            <br />
+
+            <div class="overview-table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Localização</th>
+                            <th>Número de Dispositivos</th>
+                            <th>Número de Sensores</th>
+                            <th>Sensores Ativos</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for localizacao, num_dispositivos, num_sensores, num_sensores_ativos, status in overview_localizacoes %}
+                        <tr>
+                            <td>{{ localizacao }}</td>
+                            <td>{{ num_dispositivos }}</td>
+                            <td>{{ num_sensores }}</td>
+                            <td>{{ num_sensores_ativos }}</td>
+                            <td>
+                                <span class="status-bola status-{{ status }}"></span>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

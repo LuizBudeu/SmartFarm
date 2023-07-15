@@ -2,6 +2,8 @@ import os
 import sys
 import django
 from pathlib import Path
+from setup_dispositivos_sensores import main as main_dispositivos_sensores
+from setup_leituras import main as main_leituras
 
 
 def django_setup():
@@ -17,74 +19,10 @@ def django_setup():
     django.setup()
 
 
-def truncate_tables():
-    print('Truncando tabelas...')
-    Sensor.objects.all().delete()
-    Dispositivo.objects.all().delete()
-    Leitura.objects.all().delete()
-    print('Tabelas truncadas.')
-
-
-def create_objects():
-    print('Criando tabelas...')
-    d1 = Dispositivo.objects.create(
-        modelo='TelosB',
-        localizacao='Setor A',
-    )
-    d2 = Dispositivo.objects.create(
-        modelo='TelosB',
-        localizacao='Setor A',
-    )
-    d3 = Dispositivo.objects.create(
-        modelo='TelosB',
-        localizacao='Setor B',
-    )
-    d4 = Dispositivo.objects.create(
-        modelo='TelosB',
-        localizacao='Setor C',
-    )
-
-    s = Sensor.objects.create(
-        modelo='DHT11',
-        tipo='Temperatura',
-        ativo=True,
-        dispositivo=d1,
-    )
-    s = Sensor.objects.create(
-        modelo='Ph4502c',
-        tipo='pH',
-        ativo=True,
-        dispositivo=d1,
-    )
-    s = Sensor.objects.create(
-        modelo='DHT11',
-        tipo='Temperatura',
-        ativo=True,
-        dispositivo=d2,
-    )
-    s = Sensor.objects.create(
-        modelo='DHT11',
-        tipo='Temperatura',
-        ativo=True,
-        dispositivo=d3,
-    )
-    s = Sensor.objects.create(
-        modelo='DHT11',
-        ativo=True,
-        dispositivo=d4,
-    )
-
-    print(d1.sensores.all())  # type: ignore
-    print('Tabelas criadas.')
-
-
-def main():
-    truncate_tables()  # ATENCAO!!!
-    create_objects()
-
-
 if __name__ == '__main__':
     django_setup()
 
     from app.models import Sensor, Dispositivo, Leitura
-    main()
+
+    main_dispositivos_sensores()
+    main_leituras()
