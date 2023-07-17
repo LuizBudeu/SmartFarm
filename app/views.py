@@ -9,8 +9,6 @@ def first(request):
 
 
 def home(request):
-    localizacoes = Dispositivo.objects.values_list(
-        'localizacao', flat=True).distinct()
 
     overview_localizacoes = []
     overview_leituras = []
@@ -27,6 +25,9 @@ def home(request):
 
     else:
         dispositivos = Dispositivo.objects.all()
+
+    localizacoes = dispositivos.values_list(
+        'localizacao', flat=True).distinct()
 
     for localizacao in localizacoes:
         dispositivos_localizacao = dispositivos.filter(localizacao=localizacao)
