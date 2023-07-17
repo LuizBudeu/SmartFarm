@@ -70,6 +70,33 @@
                     </tbody>
                 </table>
             </div>
+
+            <br />
+            <h1>Overview das Leituras</h1>
+            <br />
+
+            <div class="overview-table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Localização</th>
+                            <th>Média Temperatura</th>
+                            <th>Média Humidade</th>
+                            <th>Média pH</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for localizacao, media_temperatura, media_humidade, media_ph, temperatura_level, humidade_level, ph_level in overview_leituras %}
+                        <tr>
+                            <td>{{ localizacao }}</td>
+                            <td style="color: {{ temperatura_level }}">{{ media_temperatura }}</td>
+                            <td style="color: {{ humidade_level }}">{{ media_humidade }}</td>
+                            <td style="color: {{ ph_level }}">{{ media_ph }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

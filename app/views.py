@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from app.models import Dispositivo, Sensor, Leitura
 from app.forms import DispositivoForm, FiltroLocalizacaoForm, SensorForm
+from django.db.models import Avg
 
 
 def first(request):
@@ -10,7 +11,9 @@ def first(request):
 def home(request):
     localizacoes = Dispositivo.objects.values_list(
         'localizacao', flat=True).distinct()
+
     overview_localizacoes = []
+    overview_leituras = []
 
     # Processar o formulário de filtro de localização
     form = FiltroLocalizacaoForm(request.GET)
@@ -27,6 +30,7 @@ def home(request):
 
     for localizacao in localizacoes:
         dispositivos_localizacao = dispositivos.filter(localizacao=localizacao)
+
         num_dispositivos = dispositivos_localizacao.count()
         num_sensores = Sensor.objects.filter(
             dispositivo__in=dispositivos_localizacao).count()
@@ -35,17 +39,38 @@ def home(request):
 
         # Calcula o status do sensor para a localização atual
         if num_sensores_ativos == 0:
-            status = 'vermelho'  # Nenhum sensor ativo (bolinha vermelha)
+            # Nenhum sensor ativo (bolinha vermelha)
+            dispositivos_status = 'vermelho'
         elif num_sensores_ativos < num_sensores:
-            status = 'laranja'  # Alguns sensores não ativos (bolinha laranja)
+            # Alguns sensores não ativos (bolinha laranja)
+            dispositivos_status = 'laranja'
         else:
-            status = 'verde'  # Todos os sensores ativos (bolinha verde)
+            # Todos os sensores ativos (bolinha verde)
+            dispositivos_status = 'verde'
 
         overview_localizacoes.append(
-            (localizacao, num_dispositivos, num_sensores, f"{num_sensores_ativos}/{num_sensores}", status))
+            (localizacao, num_dispositivos, num_sensores, f"{num_sensores_ativos}/{num_sensores}", dispositivos_status))
+
+        # Cálculo das médias de temperatura, umidade e pH
+        leituras_localizacao = Leitura.objects.filter(
+            sensor__dispositivo__in=dispositivos_localizacao)
+        media_temperatura = leituras_localizacao.filter(sensor__tipo='temperatura').aggregate(
+            media=Avg('valor'))['media']
+        media_humidade = round(leituras_localizacao.filter(sensor__tipo='humidade').aggregate(
+            media=Avg('valor'))['media'] * 100, 2)
+        media_ph = leituras_localizacao.filter(
+            sensor__tipo='ph').aggregate(media=Avg('valor'))['media']
+
+        overview_leituras.append((localizacao,
+                                 f"{media_temperatura} °C", f"{media_humidade} %", media_ph,
+                                  verificar_medida(media_temperatura, 25, 10), verificar_medida(
+                                      media_humidade, 50, 10),
+                                  verificar_medida(media_ph, 7, 10))
+                                 )
 
     context = {
         'overview_localizacoes': overview_localizacoes,
+        'overview_leituras': overview_leituras,
         'localizacoes': localizacoes,
         'form': form,  # Adiciona o formulário de filtro ao contexto
     }
@@ -149,3 +174,18 @@ def atualizar_sensor(request, sensor_id):
 def relatorio(request):
     context = {}
     return render(request, 'relatorio.html', context)
+
+
+def verificar_medida(medida, valor_ideal, erro_aceitavel):
+    try:
+        erro_percentual = abs((medida - valor_ideal) / valor_ideal) * 100
+
+        if erro_percentual <= erro_aceitavel:
+            return 'green'
+        elif erro_percentual > erro_aceitavel and erro_percentual <= 2 * erro_aceitavel:
+            return 'orange'
+        else:
+            return 'red'
+
+    except TypeError:  # return default black
+        return 'black'

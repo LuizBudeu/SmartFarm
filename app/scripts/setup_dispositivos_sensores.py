@@ -49,30 +49,55 @@ def create_objects():
 
     s = Sensor.objects.create(
         modelo='DHT11',
-        tipo='Temperatura',
+        tipo='temperatura',
+        ativo=True,
+        dispositivo=d1,
+    )
+    s = Sensor.objects.create(
+        modelo='DHT11',
+        tipo='humidade',
         ativo=True,
         dispositivo=d1,
     )
     s = Sensor.objects.create(
         modelo='Ph4502c',
-        tipo='pH',
+        tipo='ph',
         ativo=True,
         dispositivo=d1,
     )
     s = Sensor.objects.create(
         modelo='DHT11',
-        tipo='Temperatura',
+        tipo='temperatura',
         ativo=True,
         dispositivo=d2,
     )
     s = Sensor.objects.create(
         modelo='DHT11',
-        tipo='Temperatura',
+        tipo='humidade',
+        ativo=True,
+        dispositivo=d2,
+    )
+    s = Sensor.objects.create(
+        modelo='DHT11',
+        tipo='temperatura',
         ativo=True,
         dispositivo=d3,
     )
     s = Sensor.objects.create(
         modelo='DHT11',
+        tipo='humidade',
+        ativo=True,
+        dispositivo=d3,
+    )
+    s = Sensor.objects.create(
+        modelo='DHT11',
+        tipo='temperatura',
+        ativo=True,
+        dispositivo=d4,
+    )
+    s = Sensor.objects.create(
+        modelo='DHT11',
+        tipo='humidade',
         ativo=True,
         dispositivo=d4,
     )
