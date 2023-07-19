@@ -2,6 +2,16 @@ from django.shortcuts import render, redirect
 from app.models import Dispositivo, Sensor, Leitura
 from app.forms import DispositivoForm, FiltroLocalizacaoForm, SensorForm
 from django.db.models import Avg
+from datetime import datetime, timedelta
+
+from django.shortcuts import render
+from django.http import HttpResponse
+from .models import Leitura
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+import matplotlib.pyplot as plt
+import io
+import datetime
 
 
 def first(request):
@@ -173,7 +183,35 @@ def atualizar_sensor(request, sensor_id):
 
 
 def relatorio(request):
+
     context = {}
+    if request.method == "GET":
+        return render(request, 'relatorio.html', context)
+
+    if request.POST.get("data-inicio") is not None:  # Relatório de período específico
+        initial_date = request.POST["data-inicio"]
+        end_date = request.POST["data-fim"]
+        # Erro de datas
+        if initial_date == "" or end_date == "" or datetime.strptime(initial_date, "%Y-%m-%d") > datetime.strptime(end_date, "%Y-%m-%d"):
+            context["error_msg"] = "Insira datas válidas."
+            return render(request, 'relatorio.html', context)
+        request.session["initial-date"] = initial_date
+        request.session["end-date"] = end_date
+        return redirect(f"mostrarelatoriogeral")
+
+    # Lógica para gerar os dados e preencher a variável 'dados'
+    dados = []  # Substitua essa lista vazia pelos dados reais do seu relatório
+
+    pdf_buffer = gerar_pdf(dados)
+
+    response = HttpResponse(pdf_buffer, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="relatorio.pdf"'
+    return response
+
+    context = {
+
+    }
+
     return render(request, 'relatorio.html', context)
 
 
@@ -190,3 +228,56 @@ def verificar_medida(medida, valor_ideal, erro_aceitavel):
 
     except TypeError:  # return default black
         return 'black'
+
+
+def gerar_pdf(dados):
+    buffer = io.BytesIO()
+
+    p = canvas.Canvas(buffer, pagesize=letter)
+
+    p.drawString(72, 800, "Relatório de Leituras")
+    p.drawString(72, 780, datetime.datetime.now().strftime(
+        "%Y-%m-%d %H:%M:%S"))
+
+    y = 750
+    for localizacao, media_temperatura, media_humidade, media_ph, leituras in dados:
+        p.drawString(72, y, f"Localização: {localizacao}")
+        p.drawString(72, y - 20, f"Média Temperatura: {media_temperatura}")
+        p.drawString(72, y - 40, f"Média Umidade: {media_humidade}")
+        p.drawString(72, y - 60, f"Média pH: {media_ph}")
+
+        # Gerar gráficos de leituras históricas de temperatura, umidade e pH
+        fig, ax = plt.subplots(figsize=(6, 4))
+
+        data = [leitura.data_hora for leitura in leituras]
+        temperatura = [leitura.temperatura for leitura in leituras]
+        humidade = [leitura.humidade for leitura in leituras]
+        ph = [leitura.ph for leitura in leituras]
+
+        ax.plot(data, temperatura, label='Temperatura', color='r')
+        ax.plot(data, humidade, label='Umidade', color='g')
+        ax.plot(data, ph, label='pH', color='b')
+
+        ax.set_xlabel('Data e Hora')
+        ax.set_ylabel('Valor')
+        ax.set_title('Leituras Históricas')
+        ax.legend()
+
+        plt.tight_layout()
+
+        # Salvar o gráfico como uma imagem temporária
+        temp_buffer = io.BytesIO()
+        plt.savefig(temp_buffer, format='png')
+        temp_buffer.seek(0)
+
+        # Adicionar o gráfico ao PDF
+        p.drawImage(temp_buffer, 72, y - 100, width=400, height=200)
+
+        plt.close()
+
+        y -= 320
+
+    p.save()
+
+    buffer.seek(0)
+    return buffer

@@ -2,18 +2,34 @@
 <html>
     <head>
         <title>Relatório</title>
-        <link
-            rel="stylesheet"
-            href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-        />
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
     </head>
     <body>
         {% include 'navbar.html' %}
 
         <div class="container">
-            <h1>Relatorio</h1>
+            <br />
+            <h1>Gerar Relatório</h1>
+            <br />
+
+            <div class="col-md-4">
+                <form action="{% url 'relatorio' %}" method="POST">
+                    <div class="form-group">
+                        {% csrf_token %}
+                        <label for="data-inicio">Data de início</label>
+                        <input name="data-inicio" type="date" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label for="data-fim">Data de fim</label>
+                        <input name="data-fim" type="date" class="form-control" />
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gerar Relatório &raquo;</button>
+                    <h4 style="color: rgb(255, 56, 56)">{{error_msg}}</h4>
+                </form>
+            </div>
         </div>
 
+        <br />
         <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>

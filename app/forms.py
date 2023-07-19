@@ -22,3 +22,10 @@ class FiltroLocalizacaoForm(forms.Form):
 
     localizacao = forms.ChoiceField(
         choices=[('', 'Todas as Localizações')] + LOCALIZACOES_CHOICES, required=False)
+
+
+# class RelatorioForm(forms.Form):
+#     CHOICES = [('dia', 'Relatório do Dia'), ('periodo',
+#                                              'Relatório de um Período Específico')]
+#     opcao_relatorio = forms.ChoiceField(
+#         choices=CHOICES, widget=forms.RadioSelect)
