@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Relatório</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    </head>
+    <body>
+        {% include 'navbar.html' %}
+
+        <div class="container">
+            <h1>Relatório de Leituras</h1>
+
+            <h2>Localização: {{ localizacao }}</h2>
+
+            <div class="row">
+                <div class="col-md-4">
+                    <h3>Gráfico de Temperatura</h3>
+                    <img src="data:image/png;base64,{{ grafico_temperatura }}" alt="Gráfico de Temperatura" />
+                </div>
+                <div class="col-md-4">
+                    <h3>Gráfico de Umidade</h3>
+                    <img src="data:image/png;base64,{{ grafico_umidade }}" alt="Gráfico de Umidade" />
+                </div>
+                <div class="col-md-4">
+                    <h3>Gráfico de pH</h3>
+                    <img src="data:image/png;base64,{{ grafico_ph }}" alt="Gráfico de pH" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    </body>
+</html>

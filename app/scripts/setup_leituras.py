@@ -2,7 +2,7 @@ import os
 import sys
 import django
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 
@@ -52,14 +52,16 @@ def create_leituras():
     }
 
     for i, sensor in enumerate(sensores):
-        Leitura.objects.create(
-            sensor=sensor,
-            valor=random.randint(
-                valores[sensor.tipo][0], valores[sensor.tipo][1]) if type(valores[sensor.tipo][0]) is int else
-            random.uniform(
-                valores[sensor.tipo][0], valores[sensor.tipo][1]),
-            unidade_medida=unidades[sensor.tipo]
-        )
+        for j in range(3):
+            Leitura.objects.create(
+                sensor=sensor,
+                valor=random.randint(
+                    valores[sensor.tipo][0], valores[sensor.tipo][1]) if type(valores[sensor.tipo][0]) is int else
+                random.uniform(
+                    valores[sensor.tipo][0], valores[sensor.tipo][1]),
+                unidade_medida=unidades[sensor.tipo],
+                data_hora=datetime.now() - timedelta(minutes=random.randint(1, 60))
+            )
 
     # # Criar leituras para o sensor 1
     # Leitura.objects.create(

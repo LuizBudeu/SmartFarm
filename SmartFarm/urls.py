@@ -37,5 +37,6 @@ urlpatterns = [
          views.atualizar_sensor, name='atualizar_sensor'),
     path('sensores/adicionar/<int:dispositivo_id>/',
          views.adicionar_sensor, name='adicionar_sensor'),
+    path('mostrarelatorio', views.mostrarelatorio, name='mostrarelatorio'),
 
 ]
