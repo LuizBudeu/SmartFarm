@@ -1,3 +1,5 @@
+{% load custom_filters %}
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -10,22 +12,37 @@
         <div class="container">
             <h1>Relatório de Leituras</h1>
 
+            {% for localizacao, v in dados %}
             <h2>Localização: {{ localizacao }}</h2>
 
-            <div class="row">
-                <div class="col-md-4">
-                    <h3>Gráfico de Temperatura</h3>
-                    <img src="data:image/png;base64,{{ grafico_temperatura }}" alt="Gráfico de Temperatura" />
-                </div>
-                <div class="col-md-4">
-                    <h3>Gráfico de Umidade</h3>
-                    <img src="data:image/png;base64,{{ grafico_umidade }}" alt="Gráfico de Umidade" />
-                </div>
-                <div class="col-md-4">
-                    <h3>Gráfico de pH</h3>
-                    <img src="data:image/png;base64,{{ grafico_ph }}" alt="Gráfico de pH" />
-                </div>
-            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Data e Hora</th>
+                        <th>Sensor</th>
+                        <th>Valor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for obj in v %}
+                    <tr>
+                        <td>{{ obj.data_hora }}</td>
+                        <td>{{ obj.sensor.id }}</td>
+                        {% if obj.sensor.tipo == 'humidade' %}
+                        <td>{{ obj.valor|mul:100|floatformat:2}} {{obj.unidade_medida}}</td>
+
+                        {% else %}
+                        <td>{{ obj.valor|floatformat:2}} {{obj.unidade_medida}}</td>
+
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <br />
+
+            {% endfor %}
         </div>
 
         <br />
