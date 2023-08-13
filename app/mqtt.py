@@ -8,6 +8,10 @@ unidades = {
     'ph': ''
 }
 
+for sensor in Sensor.objects.all():
+    print(f'Subscribing to SmartFarm/{sensor.id}/read...')
+    client.subscribe(f'SmartFarm/{sensor.id}/read')
+
 def on_message(mqtt_client, userdata, msg):
    print(f'Received message on topic: {msg.topic} with payload: {msg.payload}')
    topic_split = msg.topic.split("/")
@@ -21,7 +25,7 @@ def on_message(mqtt_client, userdata, msg):
         unidade_medida=unidades[sensor.tipo],
         data_hora=datetime.now()
     )
-    
+
 client.on_message = on_message
 
 def publish_message(topic, message):

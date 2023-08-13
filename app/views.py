@@ -9,6 +9,7 @@ from django.shortcuts import render
 from .models import Leitura
 
 from app.mqtt import publish_message
+from SmartFarm.mqtt import client as mqtt_client
 
 def first(request):
     return render(request, 'first.html')
@@ -156,8 +157,9 @@ def adicionar_sensor(request, dispositivo_id):
             sensor = form.save(commit=False)
             sensor.dispositivo = dispositivo
             sensor.save()
-            print(f'enviando para SmartFarm/{sensor_id}/write: {sensor.valor_ideal}')
-            publish_message(f'SmartFarm/{sensor_id}/write', sensor.valor_ideal)
+            print(f'enviando para SmartFarm/{sensor.id}/ideal: {sensor.valor_ideal}')
+            publish_message(f'SmartFarm/{sensor.id}/ideal', sensor.valor_ideal)
+            mqtt_client.subscribe(f'SmartFarm/{sensor.id}/read') # Subscribe sensor read
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm()
@@ -175,8 +177,8 @@ def atualizar_sensor(request, sensor_id):
         form = SensorForm(request.POST, instance=sensor)
         if form.is_valid():
             form.save()
-            print(f'enviando para SmartFarm/{sensor_id}/write: {sensor.valor_ideal}')
-            publish_message(f'SmartFarm/{sensor_id}/write', sensor.valor_ideal)
+            print(f'enviando para SmartFarm/{sensor_id}/ideal: {sensor.valor_ideal}')
+            publish_message(f'SmartFarm/{sensor_id}/ideal', sensor.valor_ideal)
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm(instance=sensor)
