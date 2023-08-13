@@ -4,7 +4,7 @@ from . import settings
 def on_connect(mqtt_client, userdata, flags, rc):
    if rc == 0:
        print('Connected successfully')
-       mqtt_client.subscribe('SmartFarm/basic')
+       mqtt_client.subscribe('SmartFarm/ConnectDevice')
    else:
        print('Bad connection. Code:', rc)
 

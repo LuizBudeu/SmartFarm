@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from .models import Leitura
 
-from app.mqtt import publish_message
+from app.mqtt import publish_message, publish_device_info
 from SmartFarm.mqtt import client as mqtt_client
 
 def first(request):
@@ -107,7 +107,8 @@ def adicionar_dispositivo(request):
     if request.method == 'POST':
         form = DispositivoForm(request.POST)
         if form.is_valid():
-            form.save()
+            dispositivo = form.save()
+            mqtt_client.subscribe(f'SmartFarm/{dispositivo.id}/read') # Subscribe device read
             return redirect('dispositivos_e_sensores')
     else:
         form = DispositivoForm()
@@ -159,7 +160,6 @@ def adicionar_sensor(request, dispositivo_id):
             sensor.save()
             print(f'enviando para SmartFarm/{sensor.id}/ideal: {sensor.valor_ideal}')
             publish_message(f'SmartFarm/{sensor.id}/ideal', sensor.valor_ideal)
-            mqtt_client.subscribe(f'SmartFarm/{sensor.id}/read') # Subscribe sensor read
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm()
@@ -177,8 +177,7 @@ def atualizar_sensor(request, sensor_id):
         form = SensorForm(request.POST, instance=sensor)
         if form.is_valid():
             form.save()
-            print(f'enviando para SmartFarm/{sensor_id}/ideal: {sensor.valor_ideal}')
-            publish_message(f'SmartFarm/{sensor_id}/ideal', sensor.valor_ideal)
+            publish_device_info(sensor.dispositivo)
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm(instance=sensor)
