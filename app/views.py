@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 from django.shortcuts import render
 from .models import Leitura
 
+from app.mqtt import publish_message
 
 def first(request):
     return render(request, 'first.html')
@@ -148,12 +149,15 @@ def delete_sensor(request, sensor_id):
 
 def adicionar_sensor(request, dispositivo_id):
     dispositivo = Dispositivo.objects.get(id=dispositivo_id)
+    print("Adiciona_sensor")
     if request.method == 'POST':
         form = SensorForm(request.POST)
         if form.is_valid():
             sensor = form.save(commit=False)
             sensor.dispositivo = dispositivo
             sensor.save()
+            print(f'enviando para SmartFarm/{sensor_id}/write: {sensor.valor_ideal}')
+            publish_message(f'SmartFarm/{sensor_id}/write', sensor.valor_ideal)
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm()
@@ -166,10 +170,13 @@ def adicionar_sensor(request, dispositivo_id):
 
 def atualizar_sensor(request, sensor_id):
     sensor = Sensor.objects.get(id=sensor_id)
+    print("Atualiza_sensor")
     if request.method == 'POST':
         form = SensorForm(request.POST, instance=sensor)
         if form.is_valid():
             form.save()
+            print(f'enviando para SmartFarm/{sensor_id}/write: {sensor.valor_ideal}')
+            publish_message(f'SmartFarm/{sensor_id}/write', sensor.valor_ideal)
             return redirect('dispositivos_e_sensores')
     else:
         form = SensorForm(instance=sensor)
